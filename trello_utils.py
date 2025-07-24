@@ -2,7 +2,12 @@ import requests
 import os
 from dotenv import load_dotenv
 
-load_dotenv()
+import os
+from dotenv import load_dotenv
+
+# Only load .env if it exists and we're not on Render
+if os.path.exists(".env") and not os.environ.get("RENDER"):
+    load_dotenv()
 
 API_KEY = os.getenv("TRELLO_API_KEY")
 TOKEN = os.getenv("TRELLO_TOKEN")
