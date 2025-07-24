@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>{{board_name}} Board</title>
+  <meta http-equiv="refresh" content="60; URL=/{{next_index}}">
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body class="board-{{ board_name | lower | replace(' ', '-') }}">
+  <h1>{{ board_name }} Board</h1>
+  <div class="list-container">
+    {% for list_name, cards in board.items() %}
+      <div class="list">
+        <h2>{{ list_name }}</h2>
+        <div class="card-container">
+          {% for card in cards %}
+            <div class="card">
+              <p><strong>{{ card.name }}</strong></p>
+              {% if card.members %}
+                <div class="members">
+                  {% for member in card.members %}
+                    <span class="member" title="{{ member.fullName }}">{{ member.firstName }}</span>
+                  {% endfor %}
+                </div>
+              {% endif %}
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+
+  <script>
+    const container = document.querySelector('.list-container');
+    let scrollSpeed = 0.5; // pixels per frame (~30px/sec at 60fps)
+    let direction = 1;
+
+    function smoothScroll() {
+      if (!container) return;
+
+      container.scrollLeft += scrollSpeed * direction;
+
+      // Reverse direction if at either end
+      if (container.scrollLeft + container.clientWidth >= container.scrollWidth - 1) {
+        direction = -1;
+      } else if (container.scrollLeft <= 0) {
+        direction = 1;
+      }
+
+      requestAnimationFrame(smoothScroll);
+    }
+
+    requestAnimationFrame(smoothScroll);
+  </script>
+
+  <script>
+  document.querySelectorAll('.card-container').forEach(container => {
+    let scrollTop = 0;
+    let direction = 1;
+    const speed = 0.5; // pixels per frame
+
+    function scrollCards() {
+      const maxScroll = container.scrollHeight - container.clientHeight;
+
+      if (scrollTop >= maxScroll) direction = -1;
+      if (scrollTop <= 0) direction = 1;
+
+      scrollTop += direction * speed;
+      container.scrollTop = scrollTop;
+
+      requestAnimationFrame(scrollCards);
+    }
+
+    requestAnimationFrame(scrollCards);
+    });
+  </script>
+
+</body>
+</html>
